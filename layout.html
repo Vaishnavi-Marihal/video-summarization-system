@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+ <title>{% block title %}{% endblock %}</title> 
+ <link rel="stylesheet"  href="/static/css/style.css">
+ <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500&display=swap" rel="stylesheet"> 
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+</head>
+<body style="background-image:url('static/images/web2.png') ;background-image: url('/static/images/web2.png');
+background-repeat: no-repeat;
+background-size: cover;
+background-attachment: fixed;">
+    <div class="container-fluid">
+        <header class="row">
+            <nav>
+                <div class="tag"><a href=""><img class="icon" src="/static/images/icon2.png" alt="" style="height: 50px;
+                    width: 50px;
+                    object-fit: contain;
+                    position: absolute;
+                    top:10px;
+                    object-position: left;
+                    left: 10vw;"></a></div>
+                <div class="tag"><a href="{{ url_for('index') }}">Index</a></div>
+                
+            </nav>
+        </header>
+        <div class="col-xs-12">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>
+   

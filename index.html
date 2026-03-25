@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Summarizer - AI-Powered Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body.dark-mode {
+    background: linear-gradient(135deg, #101621 0%, #0f172a 100%);
+    color: #cbd5e1;
+}
+
+body.dark-mode .navbar {
+    background: rgba(30, 41, 59, 0.95);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode .nav-links a {
+    color: #94a3b8;
+}
+
+body.dark-mode .nav-links a:hover,
+body.dark-mode .nav-links a.active {
+    color: #60a5fa;
+}
+
+body.dark-mode .feature-card,
+body.dark-mode .about-content,
+body.dark-mode .summarizer-container,
+body.dark-mode .kb-card {
+    background: rgba(31, 41, 55, 0.85);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    color: #cbd5e1;
+}
+
+body.dark-mode .feature-card h3,
+body.dark-mode .about-content h2,
+body.dark-mode .kb-card h3,
+body.dark-mode .summarizer-container .header h1 {
+    color: #e0e7ff;
+}
+
+body.dark-mode .hero h1,
+body.dark-mode .stat-number {
+    color: #bfdbfe;
+}
+
+body.dark-mode .hero p,
+body.dark-mode .feature-card p,
+body.dark-mode .about-content p,
+body.dark-mode .kb-card li,
+body.dark-mode .loading-text,
+body.dark-mode .loading-subtext {
+    color: #94a3b8;
+}
+
+body.dark-mode .btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.6);
+    color: white;
+}
+
+body.dark-mode .upload-area {
+    background: #1e293b;
+    border-color: #475569;
+    color: #cbd5e1;
+}
+
+body.dark-mode .upload-area:hover {
+    background: #334155;
+    border-color: #60a5fa;
+}
+
+body.dark-mode .progress-bar {
+    background: #475569;
+}
+
+body.dark-mode .progress-fill {
+    background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+}
+
+body.dark-mode .toast {
+    background: #334155;
+    color: #cbd5e1;
+}
+
+/* Adjust buttons for dark mode */
+body.dark-mode .btn-download {
+    background: #22c55e;
+    box-shadow: 0 2px 10px rgba(34, 197, 94, 0.5);
+}
+
+body.dark-mode .btn-download:hover {
+    background: #16a34a;
+}
+
+body.dark-mode .btn-new {
+    background: #2563eb;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.5);
+}
+
+body.dark-mode .btn-new:hover {
+    background: #1d4ed8;
+}
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #4a5568;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #667eea;
+        }
+
+        /* Page Container */
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* Home Page */
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-btn {
+            background: white;
+            color: #667eea;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            color: #2d3748;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .feature-card p {
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        /* About Page */
+        .about-content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .about-content h2 {
+            color: #2d3748;
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+
+        .about-content h3 {
+            color: #667eea;
+            font-size: 24px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .about-content p {
+            color: #4a5568;
+            line-height: 1.8;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 30px;
+            background: #f7fafc;
+            border-radius: 12px;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Knowledge Base */
+        .kb-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .kb-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .kb-card h3 {
+            color: #2d3748;
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .kb-card ul {
+            list-style: none;
+        }
+
+        .kb-card li {
+            color: #4a5568;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+            line-height: 1.6;
+        }
+
+        .kb-card li:last-child {
+            border-bottom: none;
+        }
+
+        .kb-card li::before {
+            content: "→";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Summarizer Page */
+        .summarizer-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 50px 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: #f7fafc;
+            margin-bottom: 30px;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: #e6fffa;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: #4a5568;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-info {
+            background: #e6fffa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-info.active {
+            display: flex;
+        }
+
+        .file-icon {
+            font-size: 24px;
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            color: #2d3748;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .file-size {
+            color: #718096;
+            font-size: 12px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .loading-container {
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .loading-container.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #4a5568;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .loading-subtext {
+            color: #a0aec0;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .result-name {
+            background: #f7fafc;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-name.active {
+            display: block;
+        }
+
+        .result-name h2 {
+            color: #2d3748;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-download {
+            background: #48bb78;
+            color: white;
+            box-shadow: 0 2px 10px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-download:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-share {
+            background: #4299e1;
+            color: white;
+            box-shadow: 0 2px 10px rgba(66, 153, 225, 0.3);
+        }
+
+        .btn-share:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4);
+        }
+
+        .btn-copy {
+            background: #ed8936;
+            color: white;
+            box-shadow: 0 2px 10px rgba(237, 137, 54, 0.3);
+        }
+
+        .btn-copy:hover {
+            background: #dd6b20;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(237, 137, 54, 0.4);
+        }
+
+        .btn-new {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-new:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .summary-box {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .summary-text {
+            color: #4a5568;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #2d3748;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .toast.active {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .progress-bar.active {
+            display: block;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            animation: progress 3s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0%, 100% { width: 0%; }
+            50% { width: 70%; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 20px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .about-content,
+            .summarizer-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span>🎬</span> VideoSummarizer
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" data-page="home" class="active">Home</a></li>
+                <li><a href="#" data-page="summarizer">Summarizer</a></li>
+                <li><a href="#" data-page="about">About Us</a></li>
+                <li><a href="#" data-page="knowledge">Knowledge</a></li>
+                <button id="darkModeToggle" aria-label="Toggle Dark Mode" style="background:none; border:none; cursor:pointer; color:#667eea; font-size: 20px;">🌙</button>
+            </ul>
+        </div>
+    </nav>
+
+   
+    <div id="home" class="page active">
+        <div class="container">
+            <div class="hero">
+                <h1>AI-Powered Video Summarization</h1>
+                <p>Transform hours of video content into concise, actionable summaries in seconds using advanced AI technology</p>
+                <button class="hero-btn" onclick="navigateTo('summarizer')">Get Started</button>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Lightning Fast</h3>
+                    <p>Process videos in minutes, not hours. Our AI analyzes content at incredible speeds.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Highly Accurate</h3>
+                    <p>Advanced machine learning ensures precise summaries that capture key insights.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Secure & Private</h3>
+                    <p>Your videos are processed securely and never shared with third parties.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="summarizer" class="page">
+        <div class="container">
+            <div class="summarizer-container">
+                <div class="header">
+                    <h1>Video Summarizer</h1>
+                    <p>Upload your video for AI-powered summarization</p>
+                </div>
+
+                <form id="uploadForm">
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📹</div>
+                        <div class="upload-text">Drop your video here or click to browse</div>
+                        <div class="upload-subtext">Supports MP4, AVI, MOV, and more</div>
+                        <input type="file" id="fileInput" name="url" accept="video/*">
+                    </div>
+
+                    <div class="file-info" id="fileInfo">
+                        <div class="file-icon">🎬</div>
+                        <div class="file-details">
+                            <div class="file-name" id="fileName"></div>
+                            <div class="file-size" id="fileSize"></div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                        Analyze Video
+                    </button>
+
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </form>
+
+                <div class="loading-container" id="loadingContainer">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Processing your video...</div>
+                    <div class="loading-subtext">This may take a few moments</div>
+                    <div class="progress-logs" id="progressLogs" style="margin-top: 30px; max-height: 300px; overflow-y: auto; background: #f7fafc; border-radius: 8px; padding: 15px; display: none;">
+                        <div class="log-entry" style="font-family: monospace; font-size: 12px; color: #4a5568; line-height: 1.6;"></div>
+                    </div>
+                </div>
+
+                <div class="result-name" id="resultName">
+                    <h2 id="videoName"></h2>
+                    <div class="summary-box">
+                        <p class="summary-text" id="summaryText">
+                            This video discusses the implementation of AI-powered video analysis technology. Key topics include machine learning algorithms, natural language processing, and computer vision techniques used to extract meaningful insights from video content. The presentation covers real-world applications in education, business, and research sectors.
+                        </p>
+                    </div>
+                    
+                    <div class="result-actions">
+                        <button class="btn-secondary btn-share" onclick="downloadVideo()">
+                            <span>🎬</span> Download Video
+                        </button>
+                        <button class="btn-secondary btn-new" onclick="newVideo()">
+                            <span>➕</span> New Video
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Players Section - Completely Outside Container -->
+    <div style="margin-top: 40px; display: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 40px; min-height: 100vh;" id="videosSection">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h3 style="color: white; font-size: 32px; margin-bottom: 40px; text-align: center; font-weight: 700;">📺 Video Comparison</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px;">
+                <!-- Input Video -->
+                <div style="background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);">
+                    <h4 style="color: #2d3748; font-size: 20px; margin-bottom: 20px; font-weight: 600;">📹 Input Video (Original)</h4>
+                    <video id="inputVideo" width="100%" height="auto" controls style="border-radius: 12px; background: black; max-height: 500px;" onerror="handleVideoError(this, 'input')">
+                        <source id="inputVideoSource" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <p id="inputVideoError" style="color: #e53e3e; font-size: 12px; margin-top: 12px; display: none;"></p>
+                </div>
+                
+                <!-- Output Video -->
+                <div style="background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);">
+                    <h4 style="color: #2d3748; font-size: 20px; margin-bottom: 20px; font-weight: 600;">🎬 Output Video (Summarized)</h4>
+                    <video id="outputVideo" width="100%" height="auto" controls style="border-radius: 12px; background: black; max-height: 500px;" onerror="handleVideoError(this, 'output')">
+                        <source id="outputVideoSource" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <p id="outputVideoError" style="color: #e53e3e; font-size: 12px; margin-top: 12px; display: none;"></p>
+                    <p id="outputVideoDebug" style="color: #718096; font-size: 11px; margin-top: 12px; display: none;"></p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 40px; flex-wrap: wrap;">
+                <button class="btn-secondary btn-share" onclick="downloadVideo()" style="flex: 1; min-width: 200px; padding: 16px 30px; font-size: 16px;">
+                    <span>⬇️</span> Download Video
+                </button>
+                <button class="btn-secondary btn-new" onclick="newVideo()" style="flex: 1; min-width: 200px; padding: 16px 30px; font-size: 16px;">
+                    <span>➕</span> New Video
+                </button>
+            </div>
+        </div>
+    </div>
+
+   
+    <div id="about" class="page">
+        <div class="container">
+            <div class="about-content">
+                <h2>About VideoSummarizer</h2>
+                <p>VideoSummarizer is a cutting-edge AI platform designed to transform the way professionals and individuals consume video content. In today's fast-paced world, time is precious, and our mission is to help you extract maximum value from video content in minimum time.</p>
+
+                <h3>Our Technology</h3>
+                <p>The technology employs computer vision and the YOLO model to detect human figures in multimedia content. It analyzes videos and images frame by frame, capturing those with detected persons and saving them for summarization.</p>
+
+                <h3>Why Choose Us?</h3>
+                <p>Our platform stands out through its combination of speed, accuracy, and ease of use. Users prefer our model because it quickly finds people in videos, saving valuable time. It checks frames efficiently without losing important details and works well even on less powerful computers with GPU support. The model is easy to use and handles many file types, making video review simple and fast for everyone.</p>
+
+                <div class="stats">
+                    <!-- <div class="stat-card">
+                        <div class="stat-number">10K+</div>
+                        <div class="stat-label">Videos Processed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">5K+</div>
+                        <div class="stat-label">Happy Users</div>
+                    </div> -->
+                    <div class="stat-card">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Accuracy Rate</div>
+                    </div>
+                </div>
+
+                <h3>Our Vision</h3>
+                <p>Our vision is to make video analysis simple, fast, and accurate for everyone by using smart detection technology that finds people quickly in any video or image. We aim to save users time by automatically picking out important moments without making them watch everything. Our goal is to help people focus on what matters most, making multimedia review easy and efficient.</p>
+            </div>
+        </div>
+    </div>
+
+   
+    <div id="knowledge" class="page">
+        <div class="container">
+            <div class="kb-grid">
+                <div class="kb-card">
+                    <h3>📚 How It Works</h3>
+                    <ul>
+                        <li>Upload your video file through our secure interface</li>
+                        <li>Our AI analyzes audio, visual, and contextual data</li>
+                        <li>Advanced algorithms identify key moments and topics</li>
+                        <li>Receive a comprehensive summary with timestamps</li>
+                        <li>Download your summaries easily</li>
+                    </ul>
+                </div>
+
+                <div class="kb-card">
+                    <h3>💡 Best Practices</h3>
+                    <ul>
+                        <!-- <li>Ensure videos have clear audio for best results</li> -->
+                        <li>Higher quality videos produce better summaries</li>
+                        <li>Videos under 2 hours process fastest</li>
+                        <li>Review summaries for critical content verification</li>
+                        <!-- <li>Use timestamps to quickly navigate source videos</li> -->
+                    </ul>
+                </div>
+
+                <div class="kb-card">
+                    <h3>🎥 Supported Formats</h3>
+                    <ul>
+                        <li>MP4 - Most common and recommended format</li>
+                        <li>AVI - Classic video format, fully supported</li>
+                        <li>MOV - Apple QuickTime format</li>
+                        <li>MKV - High quality container format</li>
+                        <li>WMV - Windows Media Video files</li>
+                    </ul>
+                </div>
+
+                <div class="kb-card">
+                    <h3>🔧 Common Use Cases</h3>
+                    <ul>
+                        <li>Educational lectures and online courses</li>
+                        <li>Business meetings and conference calls</li>
+                        <li>Research interviews and focus groups</li>
+                        <li>Webinars and training sessions</li>
+                        <li>Security reasons</li>
+                    </ul>
+                </div>
+
+                <div class="kb-card">
+                    <h3>❓ FAQ</h3>
+                    <ul>
+                        <li>Processing time varies by video length</li>
+                        <li>All uploads are encrypted and secure</li>
+                        <!-- <li>Videos are automatically deleted after 24 hours</li> -->
+                        <li>Maximum file size is 5GB per upload</li>
+                        <li>Summaries can be exported as MP4 Video</li>
+                    </ul>
+                </div>
+
+                <div class="kb-card">
+                    <h3>🚀 Tips for Success</h3>
+                    <ul>
+                        <li>Choose videos with  clarity for better summerisation</li>
+                        <li>Avoid heavily edited content</li>
+                        <li>Ensure proper lighting in video recordings</li>
+                        <!-- <li>Check audio levels are balanced</li> -->
+                        <li>Use descriptive filenames for organization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="toast" id="toast">
+        <span id="toastIcon">✓</span>
+        <span id="toastMessage">Action completed!</span>
+    </div>
+
+    <script>
+        let processedVideoUrl = null;
+        let currentInputPath = null;
+        let currentTimestamp = null;
+        
+        const navLinks = document.querySelectorAll('.nav-links a');
+        const pages = document.querySelectorAll('.page');
+
+        function navigateTo(pageName) {
+            pages.forEach(page => page.classList.remove('active'));
+            navLinks.forEach(link => link.classList.remove('active'));
+            
+            document.getElementById(pageName).classList.add('active');
+            const activeLink = document.querySelector(`[data-page="${pageName}"]`);
+            if (activeLink) activeLink.classList.add('active');
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                navigateTo(page);
+            });
+        });
+
+        // Summarizer functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const submitBtn = document.getElementById('submitBtn');
+        const uploadForm = document.getElementById('uploadForm');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const progressBar = document.getElementById('progressBar');
+        const resultName = document.getElementById('resultName');
+        const videoName = document.getElementById('videoName');
+        const progressLogs = document.getElementById('progressLogs');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelect();
+            }
+        });
+
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleFileSelect() {
+            const file = fileInput.files[0];
+            if (file) {
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                fileInfo.classList.add('active');
+                submitBtn.disabled = false;
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        uploadForm.addEventListener('submit', (e) => {
+            e.preventDefault(); 
+
+            const file = fileInput.files[0];
+            if (!file) {
+                showToast('❌', 'Please select a file first.');
+                return;
+            }
+
+            // Store the file blob for display later
+            const fileURL = URL.createObjectURL(file);
+            currentInputPath = fileURL;
+
+            submitBtn.disabled = true;
+            loadingContainer.classList.add('active');
+            progressBar.classList.add('active'); 
+            uploadArea.style.display = 'none';
+            fileInfo.classList.remove('active');
+            
+            // Show and clear progress logs
+            progressLogs.style.display = 'block';
+            progressLogs.innerHTML = '<div class="log-entry" style="font-family: monospace; font-size: 12px; color: #4a5568; line-height: 1.6;"></div>';
+
+            const formData = new FormData();
+            formData.append('video_file', file);
+
+            // Step 1: Upload the file
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Step 2: Start processing with SSE
+                currentTimestamp = data.timestamp;
+                videoName.textContent = data.filename;
+                document.getElementById('summaryText').textContent = `Processing video: ${data.filename}`;
+                
+                // Set the input video source
+                document.getElementById('inputVideoSource').src = currentInputPath;
+                document.getElementById('inputVideo').load();
+                
+                // Start listening to progress updates
+                startProgressTracking(data.timestamp, data.input_path);
+                
+                // Send request to start processing
+                return fetch('/process_video', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        input_path: data.input_path,
+                        timestamp: data.timestamp,
+                        filename: data.filename
+                    })
+                });
+            })
+            .catch(error => {
+                console.error('Error during upload:', error);
+                loadingContainer.classList.remove('active');
+                progressBar.classList.remove('active');
+                submitBtn.disabled = false;
+                uploadArea.style.display = 'block';
+                showToast('❌', 'Upload failed. Please try again.');
+            });
+        });
+
+        function startProgressTracking(timestamp, inputPath) {
+            const eventSource = new EventSource(`/progress/${timestamp}`);
+            const logElement = progressLogs.querySelector('.log-entry');
+            
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                if (data.status === 'complete') {
+                    eventSource.close();
+                    loadingContainer.classList.remove('active');
+                    progressBar.classList.remove('active');
+                    
+                    // Wait a moment for file to be fully written
+                    setTimeout(() => {
+                        // Verify the file exists
+                        fetch(`/check_video/${timestamp}/output.mp4`)
+                            .then(res => res.json())
+                            .then(fileData => {
+                                console.log('File check result:', fileData);
+                                if (fileData.exists) {
+                                    logElement.innerHTML += `<div style="color: #16a34a;"><strong>✓ File verified:</strong> ${fileData.filename} (${fileData.size} bytes)</div>`;
+                                    
+                                    // Set the output video source using the actual filename (MP4 or AVI)
+                                    const outputVideoUrl = fileData.url;  // Use the URL from the server
+                                    console.log('Setting output video source to:', outputVideoUrl);
+                                    const outputVideoElement = document.getElementById('outputVideo');
+                                    const outputVideoSource = document.getElementById('outputVideoSource');
+                                    
+                                    // Update source type based on file extension
+                                    const isAvi = fileData.filename.endsWith('.avi');
+                                    outputVideoSource.type = isAvi ? "video/x-msvideo" : "video/mp4";
+                                    outputVideoSource.src = outputVideoUrl;
+                                    console.log('Source element src set to:', outputVideoUrl, 'Type:', outputVideoSource.type);
+                                    
+                                    // Add event listeners for debugging
+                                    outputVideoElement.addEventListener('loadstart', () => console.log('Video loadstart event'));
+                                    outputVideoElement.addEventListener('progress', () => console.log('Video progress event'));
+                                    outputVideoElement.addEventListener('loadedmetadata', () => {
+                                        console.log('Video loadedmetadata:', outputVideoElement.duration, outputVideoElement.videoWidth, outputVideoElement.videoHeight);
+                                        document.getElementById('outputVideoDebug').textContent = `Loaded: ${outputVideoElement.videoWidth}x${outputVideoElement.videoHeight}, Duration: ${outputVideoElement.duration}s`;
+                                        document.getElementById('outputVideoDebug').style.display = 'block';
+                                    });
+                                    outputVideoElement.addEventListener('canplay', () => console.log('Video canplay event'));
+                                    outputVideoElement.addEventListener('error', (e) => {
+                                        console.error('Video error event:', e, outputVideoElement.error);
+                                        if (outputVideoElement.error) {
+                                            document.getElementById('outputVideoError').textContent = `Error code: ${outputVideoElement.error.code} - ${fileData.filename}`;
+                                            document.getElementById('outputVideoError').style.display = 'block';
+                                        }
+                                    });
+                                    
+                                    outputVideoElement.load();
+                                    console.log('Video load() called');
+                                    processedVideoUrl = outputVideoUrl;
+                                    
+                                    resultName.classList.add('active');
+                                    document.getElementById('videosSection').style.display = 'block';
+                                    showToast('✅', 'Video summarization complete!');
+                                } else {
+                                    logElement.innerHTML += `<div style="color: #e53e3e;"><strong>✗ Error:</strong> Output file not found!</div>`;
+                                    logElement.innerHTML += `<div style="color: #a0aec0; font-size: 11px;">Available files: ${fileData.available_files.join(', ')}</div>`;
+                                    console.error('Output file not found. Available files:', fileData.available_files);
+                                    showToast('❌', 'Output video file was not created');
+                                    resultName.classList.add('active');
+                                }
+                            })
+                            .catch(err => {
+                                console.error('File check error:', err);
+                                logElement.innerHTML += `<div style="color: #e53e3e;"><strong>✗ Error:</strong> ${err.message}</div>`;
+                                showToast('❌', 'Failed to verify output video');
+                                resultName.classList.add('active');
+                            });
+                    }, 500);
+                } else if (data.error) {
+                    eventSource.close();
+                    logElement.innerHTML += `<div style="color: #e53e3e;"><strong>Error:</strong> ${data.error}</div>`;
+                    loadingContainer.classList.remove('active');
+                    progressBar.classList.remove('active');
+                    showToast('❌', 'An error occurred during processing');
+                } else if (data.message) {
+                    // Append message to progress logs
+                    logElement.innerHTML += `<div>${escapeHtml(data.message)}</div>`;
+                    // Auto-scroll to bottom
+                    progressLogs.scrollTop = progressLogs.scrollHeight;
+                }
+            };
+            
+            eventSource.onerror = (error) => {
+                console.error('EventSource error:', error);
+                eventSource.close();
+                loadingContainer.classList.remove('active');
+                progressBar.classList.remove('active');
+                showToast('❌', 'Connection error during processing');
+            };
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function handleVideoError(videoElement, type) {
+            const errorMsg = document.getElementById(type + 'VideoError');
+            if (videoElement.error) {
+                let errorText = 'Video failed to load';
+                switch (videoElement.error.code) {
+                    case videoElement.error.MEDIA_ERR_ABORTED:
+                        errorText = 'Video loading was aborted';
+                        break;
+                    case videoElement.error.MEDIA_ERR_NETWORK:
+                        errorText = 'Network error while loading video';
+                        break;
+                    case videoElement.error.MEDIA_ERR_DECODE:
+                        errorText = 'Error decoding video';
+                        break;
+                    case videoElement.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+                        errorText = 'Video format not supported';
+                        break;
+                }
+                console.error(`Video Error (${type}):`, errorText, videoElement.error);
+                errorMsg.textContent = errorText;
+                errorMsg.style.display = 'block';
+            }
+        }
+
+        // Action buttons
+        function downloadSummary() {
+            const summaryText = document.getElementById('summaryText').textContent;
+            const videoTitle = document.getElementById('videoName').textContent;
+            
+            const blob = new Blob([`Video Summary: ${videoTitle}\n\n${summaryText}`], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${videoTitle}_summary.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('📄', 'Summary downloaded successfully!');
+        }
+
+        function downloadVideo() {
+            if (processedVideoUrl) {
+                const downloadUrl = processedVideoUrl + '?action=download';
+                window.location.href = downloadUrl;
+                showToast('🎬', 'Processed video download started!');
+            } else {
+                showToast('❌', 'No processed video URL found.');
+            }
+        }
+
+        function copySummary() {
+            const summaryText = document.getElementById('summaryText').textContent;
+            navigator.clipboard.writeText(summaryText).then(() => {
+                showToast('📋', 'Summary copied to clipboard!');
+            }).catch(() => {
+                showToast('❌', 'Failed to copy summary');
+            });
+        }
+
+        function shareSummary() {
+            const videoTitle = document.getElementById('videoName').textContent;
+            const summaryText = document.getElementById('summaryText').textContent;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: videoTitle,
+                    text: summaryText
+                }).then(() => {
+                    showToast('🔗', 'Summary shared successfully!');
+                }).catch(() => {
+                    showToast('ℹ️', 'Share cancelled');
+                });
+            } else {
+                const shareText = `${videoTitle}\n\n${summaryText}`;
+                navigator.clipboard.writeText(shareText);
+                showToast('🔗', 'Summary copied for sharing!');
+            }
+        }
+
+        function newVideo() {
+            fileInput.value = '';
+            fileInfo.classList.remove('active'); 
+            resultName.classList.remove('active');
+            document.getElementById('videosSection').style.display = 'none';
+            uploadArea.style.display = 'block';
+            submitBtn.disabled = true;
+            progressLogs.style.display = 'none';
+            progressLogs.innerHTML = '<div class="log-entry" style="font-family: monospace; font-size: 12px; color: #4a5568; line-height: 1.6;"></div>';
+            
+            // Clear video sources
+            document.getElementById('inputVideoSource').src = '';
+            document.getElementById('inputVideo').load();
+            document.getElementById('outputVideoSource').src = '';
+            document.getElementById('outputVideo').load();
+            
+            // Clear error messages
+            document.getElementById('inputVideoError').style.display = 'none';
+            document.getElementById('outputVideoError').style.display = 'none';
+            
+            // Clear URLs
+            processedVideoUrl = null;
+            currentInputPath = null;
+            currentTimestamp = null;
+
+            showToast('➕', 'Ready for new video!');
+        }
+
+        function showToast(icon, message) {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastIcon.textContent = icon;
+            toastMessage.textContent = message;
+            toast.classList.add('active');
+            
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+
+        const toggleButton = document.getElementById('darkModeToggle');
+        toggleButton.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+                toggleButton.textContent = '☀️';
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+                toggleButton.textContent = '🌙';
+            }
+        });
+        
+        // On page load, apply saved preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            toggleButton.textContent = '☀️';
+        }
+    </script>
+</body>
+</html>
+<!-- 
+{% extends "layout.html" %}
+{% block title %}Video Summarization{% endblock %}
+{% block content %}
+<div class="index">
+    <form id="load" method="POST" enctype="multipart/form-data">
+        <input class="form-control" name="video_file" type="file" accept="video/*" required>
+        <button class="form-control" id="button" type="submit" onclick="load()">Summarize</button>
+    </form>
+
+    {% if name %}
+    <h1 style="margin:0 auto">{{name}}</h1>
+    {% endif %}
+
+    <h2 id="loading" style="display:none;">wait for the video to be summarized</h2>
+    <div id="loading-spinner" style="display:none;"></div>
+    <script type="text/javascript">
+        function load() {
+            if (document.querySelector('input[name="video_file"]').files.length > 0) {
+                document.getElementById("loading").style.display = "block";
+            }
+        }
+    </script>
+</div>
+{% endblock %} -->

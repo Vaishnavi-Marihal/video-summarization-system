@@ -1,0 +1,6 @@
+flask
+opencv-python
+cvlib
+numpy
+tensorflow-cpu
+python-vlc
